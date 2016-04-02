@@ -5,7 +5,7 @@ import java.net.*;
 
 public class HttpProxy implements AutoCloseable {
 
-    private static final long CHECK_INTERVAL = 1000 * 60 * 30;
+    private static final long CHECK_INTERVAL = 1000 * 60 * 60;
     private static final String CHECK_URL = "http://google.com/";
 
     private final ProxyPool proxyPool;
