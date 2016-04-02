@@ -29,6 +29,9 @@ try (HttpProxy proxy = pool.getProxy()) {
 A try-with-resources is used because `HttpProxy` implements the `AutoClosable` interface, which will return the proxy to the pool after use.
 If you are using a java version that does not support this, it is important to call `ProxyPool#returnResource(HttpProxy)` once used.
 
+#### Using the `HttpProxy`
+Use `HttpProxy#getProxy` for a `java.net.Proxy` instance. This can be used as normal in java!
+
 ### Testing a list of working proxies
 As well as testing proxies when getting from the pool, you can get a list of working proxies which will all be tested.
 ```java
