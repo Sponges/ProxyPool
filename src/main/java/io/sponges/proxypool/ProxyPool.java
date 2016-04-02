@@ -10,9 +10,9 @@ public class ProxyPool {
 
     private final Queue<HttpProxy> queue = new ConcurrentLinkedQueue<>();
 
-    public ProxyPool(List<String[]> proxies) {
-        for (String[] arr : proxies) {
-            HttpProxy proxy = new HttpProxy(this, new InetSocketAddress(arr[0], Integer.valueOf(arr[1])));
+    public ProxyPool(List<InetSocketAddress> proxies) {
+        for (InetSocketAddress address : proxies) {
+            HttpProxy proxy = new HttpProxy(this, address);
             queue.add(proxy);
         }
     }
@@ -30,15 +30,12 @@ public class ProxyPool {
         queue.remove(proxy);
     }
 
-    public List<String[]> getWorking() {
-        List<String[]> working = new ArrayList<>();
+    public List<InetSocketAddress> getWorking() {
+        List<InetSocketAddress> working = new ArrayList<>();
         for (HttpProxy proxy : queue) {
             if (proxy.isWorking()) {
                 InetSocketAddress address = proxy.getAddress();
-                working.add(new String[]{
-                        address.getHostString(),
-                        String.valueOf(address.getPort())
-                });
+                working.add(address);
             }
         }
         return working;

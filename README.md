@@ -10,9 +10,7 @@ Features:
 
 ## Usage
 ### Proxy format
-All proxies should be formatted `ip:port`.
-
-The proxy pool takes proxies as `ArrayList<String[]>`.
+The proxy pool takes proxies as an `ArrayList<InetSocketAddress>`.
 
 ### Instantiating the pool
 Assuming "proxies" is an arraylist...
@@ -35,7 +33,7 @@ Use `HttpProxy#getProxy` for a `java.net.Proxy` instance. This can be used as no
 ### Testing a list of working proxies
 As well as testing proxies when getting from the pool, you can get a list of working proxies which will all be tested.
 ```java
-List<String[]> working = pool.getWorking();
+List<InetSocketAddress> working = pool.getWorking();
 ```
 
 ## Maven
