@@ -27,7 +27,7 @@ public class HttpProxy implements AutoCloseable {
     public boolean isWorking() {
         long current = System.currentTimeMillis();
         if (current - lastChecked > CHECK_INTERVAL) {
-            boolean works = check();
+            boolean works = runChecks(3);
             if (works) {
                 lastChecked = System.currentTimeMillis();
             } else {
@@ -37,6 +37,13 @@ public class HttpProxy implements AutoCloseable {
         } else {
             return true;
         }
+    }
+
+    private boolean runChecks(int times) {
+        for (int i = 0; i < times; i++) {
+            if (check()) return true;
+        }
+        return false;
     }
 
     public boolean check() {

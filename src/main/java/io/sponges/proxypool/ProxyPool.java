@@ -8,31 +8,40 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ProxyPool {
 
-    private final Queue<HttpProxy> queue = new ConcurrentLinkedQueue<>();
+    private final Queue<HttpProxy> active = new ConcurrentLinkedQueue<>();
+    private final Queue<HttpProxy> queued = new ConcurrentLinkedQueue<>();
 
     public ProxyPool(List<InetSocketAddress> proxies) {
+        new ProxyPool(proxies, 10);
+    }
+
+    public ProxyPool(List<InetSocketAddress> proxies, int size) {
         for (InetSocketAddress address : proxies) {
             HttpProxy proxy = new HttpProxy(this, address);
-            queue.add(proxy);
+            queued.add(proxy);
+        }
+        for (int i = 0; i < size; i++) {
+            active.add(queued.poll());
         }
     }
 
     public HttpProxy getProxy() {
-        HttpProxy proxy = queue.poll();
+        HttpProxy proxy = active.poll();
         return proxy.isWorking() ? proxy : getProxy();
     }
 
     public void returnResource(HttpProxy proxy) {
-        queue.add(proxy);
+        active.add(proxy);
     }
 
     public void removeResource(HttpProxy proxy) {
-        queue.remove(proxy);
+        active.remove(proxy);
+        active.add(queued.poll());
     }
 
     public List<InetSocketAddress> getWorking() {
         List<InetSocketAddress> working = new ArrayList<>();
-        for (HttpProxy proxy : queue) {
+        for (HttpProxy proxy : active) {
             if (proxy.isWorking()) {
                 InetSocketAddress address = proxy.getAddress();
                 working.add(address);
